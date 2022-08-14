@@ -4,9 +4,8 @@ async function CreateShortUrl(req, res, next) {
     try {
         const url = new Url({ longUrl: req.parsedUrl });
         await url.save((err) => {
-            console.log("save err", err);
+            console.log("save on db ERROR", err);
         });
-        console.log(url);
         res.json({ original_url: req.parsedUrl, short_url: url.shortUrl });
 
         next();

@@ -7,7 +7,6 @@ function ParseUrl(req, res, next) {
     const parsedLookupUrl = url.parse(lookupUrl);
 
     if (parsedLookupUrl === "") {
-        console.log(1);
         res.json({ error: "invalid url" });
         return;
     }
@@ -15,21 +14,15 @@ function ParseUrl(req, res, next) {
     dns.lookup(
         parsedLookupUrl.protocol ? parsedLookupUrl.host : parsedLookupUrl.path,
         (error, address, family) => {
-            if (error) {
-                console.error("parsedLookupUrl", error);
+            if (error || address === null) {
+                console.error("parsedLookupUrl ERROR", error);
                 res.json({ error: "invalid url" });
                 return;
+            } else {
+                req.parsedUrl = parsedLookupUrl.href;
+                next();
+                return;
             }
-
-            // res.json({
-            //     original_url: lookupUrl,
-            //     short_url: parsedLookupUrl.href,
-            // });
-
-            req.parsedUrl = parsedLookupUrl.href;
-
-            next();
-            return;
         }
     );
 }
